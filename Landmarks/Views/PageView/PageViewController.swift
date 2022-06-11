@@ -14,6 +14,10 @@ struct PageViewController<Page: View>: UIViewControllerRepresentable  {
 
     var pages: [Page]
 
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
     func makeUIViewController(context: Context) -> UIPageViewController {
         let pageViewController = UIPageViewController(
             transitionStyle: .scroll,
@@ -29,5 +33,13 @@ struct PageViewController<Page: View>: UIViewControllerRepresentable  {
             direction: .forward,
             animated: true
         )
+    }
+
+    class Coordinator: NSObject {
+        var parent: PageViewController
+
+        init(_ pageViewController: PageViewController) {
+            parent = pageViewController
+        }
     }
 }
