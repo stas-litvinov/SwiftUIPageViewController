@@ -26,6 +26,7 @@ struct PageViewController<Page: View>: UIViewControllerRepresentable  {
         )
 
         pageViewController.dataSource = context.coordinator
+        pageViewController.delegate = context.coordinator
 
         return pageViewController
     }
@@ -38,7 +39,7 @@ struct PageViewController<Page: View>: UIViewControllerRepresentable  {
         )
     }
 
-    class Coordinator: NSObject, UIPageViewControllerDataSource {
+    class Coordinator: NSObject, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
         var parent: PageViewController
         var controllers = [UIViewController]()
 
@@ -73,6 +74,18 @@ struct PageViewController<Page: View>: UIViewControllerRepresentable  {
                 }
 
                 return controllers[index + 1]
+        }
+
+        func pageViewController(
+            _ pageViewController: UIPageViewController,
+            didFinishAnimating finished: Bool,
+            previousViewControllers: [UIViewController],
+            transitionCompleted completed: Bool) {
+                if completed,
+                   let visibleViewController = pageViewController.viewControllers?.first,
+                   let index = controllers.firstIndex(of: visibleViewController) {
+                    parent.currentPage = index
+                }
         }
     }
 }
